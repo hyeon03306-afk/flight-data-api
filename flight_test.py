@@ -5,8 +5,9 @@ import os
 from datetime import datetime, timedelta
 
 # 1. 환경 설정 (API 키와 엔드포인트)
-API_KEY = os.environ.get("OPENAPI_KEY") 
-URL = "http://apis.data.go.kr/B551177/StatusOfPassengerFlightsOdp/getPassengerDeparturesOdp"
+API_KEY = os.environ.get("OPENAPI_KEY")
+ICN_URL = "http://apis.data.go.kr/B551177/StatusOfPassengerFlightsOdp/getPassengerDeparturesOdp" # 기존 인천공항
+KAC_URL = "http://apis.data.go.kr/1610000/IflightInfoService/getFlightInfo" # 추가된 전국 14개 공항
 
 # 2. 기종별 최대 좌석수 사전 (API에서 기종이 안 오면 DEFAULT 180석 적용)
 AIRCRAFT_CAPACITY = {
@@ -35,83 +36,121 @@ def fetch_and_process_flights():
     from_time_str = now.strftime("%H%M")
     to_time_str = (now + timedelta(hours=3)).strftime("%H%M")
     
-    # 파이썬 인코딩 에러 방지용 수동 URL 조립
-    request_url = f"{URL}?serviceKey={API_KEY}&from_time={from_time_str}&to_time={to_time_str}&type=json"
+    # 3. 결과 데이터를 담을 그릇 (여기에 인천공항 + 전국공항 데이터가 누적 합산됩니다)
+    result_data = {
+        "도쿄": {"1h": {"flights": 0, "pax": 0}, "2h": {"flights": 0, "pax": 0}, "3h": {"flights": 0, "pax": 0}},
+        "오사카": {"1h": {"flights": 0, "pax": 0}, "2h": {"flights": 0, "pax": 0}, "3h": {"flights": 0, "pax": 0}},
+        "후쿠오카": {"1h": {"flights": 0, "pax": 0}, "2h": {"flights": 0, "pax": 0}, "3h": {"flights": 0, "pax": 0}}
+    }
 
+    # =========================================================================
+    # [엔진 1] 사장님이 만드신 기존 로직 (인천공항) - 원본 100% 유지
+    # =========================================================================
     try:
-        response = requests.get(request_url)
+        icn_request_url = f"{ICN_URL}?serviceKey={API_KEY}&from_time={from_time_str}&to_time={to_time_str}&type=json"
+        icn_response = requests.get(icn_request_url, timeout=10)
+        icn_data = icn_response.json()
         
-        # 터미널이 지저분해지지 않게 원본 텍스트 출력 부분은 가려두었습니다 (주석 처리)
-        # print("=== 정부 서버 응답 원본 ===")
-        # print(response.text)
-        # print("===========================\n")
+        icn_items = icn_data.get("response", {}).get("body", {}).get("items", [])
         
-        data = response.json()
-        
-        # 3. 결과 데이터를 담을 그릇 (JSON 구조)
-        result_data = {
-            "도쿄": {"1h": {"flights": 0, "pax": 0}, "2h": {"flights": 0, "pax": 0}, "3h": {"flights": 0, "pax": 0}},
-            "오사카": {"1h": {"flights": 0, "pax": 0}, "2h": {"flights": 0, "pax": 0}, "3h": {"flights": 0, "pax": 0}},
-            "후쿠오카": {"1h": {"flights": 0, "pax": 0}, "2h": {"flights": 0, "pax": 0}, "3h": {"flights": 0, "pax": 0}}
-        }
+        if not icn_items:
+            print("인천공항: 조회된 데이터가 없습니다.")
+        else:
+            if isinstance(icn_items, dict): 
+                icn_items = [icn_items]
 
-        items = data.get("response", {}).get("body", {}).get("items", [])
-        
-        # 데이터가 아예 없을 경우 방어
-        if not items:
-            print("조회된 데이터가 없습니다. (API 승인 대기 중이거나 비행기가 없음)")
-            return
-
-        if isinstance(items, dict): 
-            items = [items]
-
-        for item in items:
-            dest_code = item.get("airportCode") # 목적지 공항 코드
-            
-            # 여기서 도쿄, 오사카, 후쿠오카 노선만 통과시킵니다. 나머지는 버려집니다.
-            if dest_code in TARGET_AIRPORTS:
-                city = TARGET_AIRPORTS[dest_code]
+            for item in icn_items:
+                dest_code = item.get("airportCode") 
                 
-                # 탑승객 계산 (공공데이터에 기종 정보가 없으면 DEFAULT 값인 162명으로 자동 계산됨)
-                aircraft_type = item.get("typeOfFlight", "DEFAULT") 
-                pax = get_estimated_pax(aircraft_type)
-                
-                # ---------------- [핵심: 시간 분류 로직 수정 완료 (scheduleDateTime으로 매칭)] ----------------
-                flight_time_str = str(item.get("scheduleDateTime", "")).zfill(4)
-                if not flight_time_str or flight_time_str == "0000":
-                    continue
+                if dest_code in TARGET_AIRPORTS:
+                    city = TARGET_AIRPORTS[dest_code]
+                    aircraft_type = item.get("typeOfFlight", "DEFAULT") 
+                    pax = get_estimated_pax(aircraft_type)
                     
-                # 비행 시간을 datetime 객체로 변환
-                flight_hour = int(flight_time_str[:2])
-                flight_minute = int(flight_time_str[2:])
-                flight_dt = now.replace(hour=flight_hour, minute=flight_minute, second=0, microsecond=0)
-                
-                # 현재 시간과 비행 시간의 차이를 '분(Minute)'으로 계산
-                time_diff_minutes = (flight_dt - now).total_seconds() / 60
-                
-                # 조건에 맞춰 1시간, 2시간, 3시간 슬롯에 데이터 분배
-                if 0 <= time_diff_minutes <= 60:
-                    time_key = "1h"
-                elif 60 < time_diff_minutes <= 120:
-                    time_key = "2h"
-                elif 120 < time_diff_minutes <= 180:
-                    time_key = "3h"
-                else:
-                    continue # 3시간 밖이거나 이미 지나간 비행기는 패스
-                
-                # 분배된 슬롯에 비행기 대수와 인원 누적
-                result_data[city][time_key]["flights"] += 1
-                result_data[city][time_key]["pax"] += pax
+                    flight_time_str = str(item.get("scheduleDateTime", "")).zfill(4)
+                    if not flight_time_str or flight_time_str == "0000":
+                        continue
+                        
+                    flight_hour = int(flight_time_str[:2])
+                    flight_minute = int(flight_time_str[2:])
+                    flight_dt = now.replace(hour=flight_hour, minute=flight_minute, second=0, microsecond=0)
+                    
+                    time_diff_minutes = (flight_dt - now).total_seconds() / 60
+                    
+                    if 0 <= time_diff_minutes <= 60:
+                        result_data[city]["1h"]["flights"] += 1
+                        result_data[city]["1h"]["pax"] += pax
+                    elif 60 < time_diff_minutes <= 120:
+                        result_data[city]["2h"]["flights"] += 1
+                        result_data[city]["2h"]["pax"] += pax
+                    elif 120 < time_diff_minutes <= 180:
+                        result_data[city]["3h"]["flights"] += 1
+                        result_data[city]["3h"]["pax"] += pax
+    except Exception as e:
+        print(f"❌ 인천공항 데이터 수집 에러: {e}")
 
-        # 4. 최종 JSON 파일로 저장
+
+    # =========================================================================
+    # [엔진 2] 새롭게 추가된 로직 (한국공항공사 - 전국 14개 공항)
+    # =========================================================================
+    try:
+        kac_request_url = f"{KAC_URL}?serviceKey={API_KEY}&_type=json"
+        kac_response = requests.get(kac_request_url, timeout=10)
+        
+        if kac_response.status_code == 200:
+            kac_data = kac_response.json()
+            kac_body = kac_data.get("response", {}).get("body", {})
+            kac_items = kac_body.get("items", [])
+            
+            # 전국 공항 API는 JSON 구조가 살짝 달라서 item 리스트를 한 번 더 벗겨냅니다
+            if isinstance(kac_items, dict) and "item" in kac_items:
+                kac_items = kac_items["item"]
+            if isinstance(kac_items, dict):
+                kac_items = [kac_items]
+
+            for item in kac_items:
+                # 전국 공항은 목적지 코드를 'arrivedEng'나 'airportCode'로 줍니다
+                dest_code = item.get("arrivedEng") or item.get("airportCode")
+                
+                if dest_code in TARGET_AIRPORTS:
+                    city = TARGET_AIRPORTS[dest_code]
+                    pax = 162 # 전국 공항은 기종 정보를 잘 안 주므로 기본 162명 적용
+                    
+                    # 시간 필드명도 std 또는 scheduledDateTime으로 다를 수 있습니다
+                    flight_time_str = str(item.get("std", item.get("scheduledDateTime", ""))).zfill(4)
+                    if not flight_time_str or flight_time_str == "0000":
+                        continue
+                        
+                    flight_hour = int(flight_time_str[:2])
+                    flight_minute = int(flight_time_str[2:])
+                    flight_dt = now.replace(hour=flight_hour, minute=flight_minute, second=0, microsecond=0)
+                    
+                    time_diff_minutes = (flight_dt - now).total_seconds() / 60
+                    
+                    if 0 <= time_diff_minutes <= 60:
+                        result_data[city]["1h"]["flights"] += 1
+                        result_data[city]["1h"]["pax"] += pax
+                    elif 60 < time_diff_minutes <= 120:
+                        result_data[city]["2h"]["flights"] += 1
+                        result_data[city]["2h"]["pax"] += pax
+                    elif 120 < time_diff_minutes <= 180:
+                        result_data[city]["3h"]["flights"] += 1
+                        result_data[city]["3h"]["pax"] += pax
+    except Exception as e:
+        print(f"❌ 전국 공항 데이터 수집 에러: {e}")
+
+
+    # =========================================================================
+    # 4. 합쳐진 데이터를 최종 JSON 파일로 저장
+    # =========================================================================
+    try:
         with open("flight_data.json", "w", encoding="utf-8") as f:
             json.dump(result_data, f, ensure_ascii=False, indent=4)
             
-        print("✅ flight_data.json 파일 생성 완료!")
+        print("✅ flight_data.json 파일 생성 완료! (인천 + 전국 공항 융합 성공)")
         print(json.dumps(result_data, ensure_ascii=False, indent=2))
-
     except Exception as e:
-        print(f"❌ 에러 발생: {e}")
+        print(f"❌ JSON 파일 저장 에러: {e}")
 
 if __name__ == "__main__":
     fetch_and_process_flights()
