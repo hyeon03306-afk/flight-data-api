@@ -1,10 +1,11 @@
 import requests
 import json
 import math
+import os
 from datetime import datetime, timedelta
 
 # 1. 환경 설정 (API 키와 엔드포인트)
-API_KEY = "4a0556e7bf9cfe9f119c2ff0f59f4c45370651787e0d21a443c68a55e2e51090"
+API_KEY = os.environ.get("OPENAPI_KEY") 
 URL = "http://apis.data.go.kr/B551177/StatusOfPassengerFlightsOdp/getPassengerDeparturesOdp"
 
 # 2. 기종별 최대 좌석수 사전 (API에서 기종이 안 오면 DEFAULT 180석 적용)
