@@ -1,44 +1,44 @@
 {
     "도쿄": {
         "1h": {
+            "flights": 6,
+            "pax": 972
+        },
+        "2h": {
             "flights": 0,
             "pax": 0
         },
-        "2h": {
-            "flights": 8,
-            "pax": 1296
-        },
         "3h": {
-            "flights": 3,
-            "pax": 486
+            "flights": 1,
+            "pax": 162
         }
     },
     "오사카": {
         "1h": {
-            "flights": 1,
-            "pax": 162
+            "flights": 6,
+            "pax": 972
         },
         "2h": {
             "flights": 0,
             "pax": 0
         },
         "3h": {
-            "flights": 1,
-            "pax": 162
+            "flights": 0,
+            "pax": 0
         }
     },
     "후쿠오카": {
         "1h": {
-            "flights": 2,
-            "pax": 324
+            "flights": 0,
+            "pax": 0
         },
         "2h": {
-            "flights": 3,
-            "pax": 486
+            "flights": 0,
+            "pax": 0
         },
         "3h": {
-            "flights": 6,
-            "pax": 972
+            "flights": 0,
+            "pax": 0
         }
     }
 }
