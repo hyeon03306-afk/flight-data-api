@@ -1,0 +1,34 @@
+name: Update Flight Data
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # 15분마다 자동으로 실행
+  workflow_dispatch: # 수동으로 버튼을 눌러서 실행할 수도 있게 해줌
+
+jobs:
+  build-and-update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 1. 내 코드(레포지토리) 가져오기
+      uses: actions/checkout@v3
+
+    - name: 2. 파이썬 환경 세팅하기
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: 3. 필요한 도구(requests) 설치하기
+      run: pip install -r requirements.txt
+
+    - name: 4. 비행기 데이터 수집 파이썬 스크립트 실행!
+      env:
+        OPENAPI_KEY: ${{ secrets.OPENAPI_KEY }} # 1단계에서 만든 금고 열쇠를 파이썬에 전달
+      run: python flight_test.py
+
+    - name: 5. 새로 만들어진 JSON 파일을 깃허브에 자동 저장(Push)
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add flight_data.json
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update flight data" && git push)
