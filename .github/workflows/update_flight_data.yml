@@ -8,11 +8,18 @@ on:
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
+    
+    # 혹시 모를 권한 누락을 방지하기 위해 파일에도 직접 쓰기 권한을 명시합니다.
+    permissions:
+      contents: write
 
     steps:
-    - name: 1. 시스템 Git 도구로 직접 소스 코드 받아오기
+    # 1. 수동 git clone 대신 공식 Checkout 액션을 사용하여 인증 문제 해결
+    - name: 1. 소스 코드 가져오기 (Checkout)
+      uses: actions/checkout@v4
+
+    - name: 1-1. Git 사용자 정보 설정
       run: |
-        git clone https://github.com/${{ github.repository }}.git .
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
