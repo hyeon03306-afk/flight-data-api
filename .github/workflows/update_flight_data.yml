@@ -3,7 +3,7 @@ name: Update Flight Data
 on:
   schedule:
     - cron: '*/15 * * * *' # 15분마다 자동으로 실행
-  workflow_dispatch: # 수동으로 버튼을 눌러서 실행할 수도 있게 해줌
+  workflow_dispatch: # 수동 실행 버튼
 
 jobs:
   build-and-update:
@@ -11,10 +11,10 @@ jobs:
 
     steps:
     - name: 1. 내 코드(레포지토리) 가져오기
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 # v3에서 v4로 최신화
 
     - name: 2. 파이썬 환경 세팅하기
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5 # v4에서 v5로 최신화
       with:
         python-version: '3.x'
 
@@ -23,7 +23,7 @@ jobs:
 
     - name: 4. 비행기 데이터 수집 파이썬 스크립트 실행!
       env:
-        OPENAPI_KEY: ${{ secrets.OPENAPI_KEY }} # 1단계에서 만든 금고 열쇠를 파이썬에 전달
+        OPENAPI_KEY: ${{ secrets.OPENAPI_KEY }}
       run: python flight_test.py
 
     - name: 5. 새로 만들어진 JSON 파일을 깃허브에 자동 저장(Push)
