@@ -1,5 +1,5 @@
 {
-    "히로시마": {
+    "오키나와": {
         "1h": {
             "flights": 0,
             "pax": 0
@@ -9,64 +9,36 @@
             "pax": 0
         },
         "3h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 5,
+            "pax": 810
         }
     },
-    "시즈오카": {
+    "후쿠오카": {
         "1h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 4,
+            "pax": 648
         },
         "2h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 5,
+            "pax": 810
         },
         "3h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 2,
+            "pax": 324
         }
     },
-    "센다이": {
+    "도쿄": {
         "1h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 4,
+            "pax": 648
         },
         "2h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 10,
+            "pax": 1620
         },
         "3h": {
-            "flights": 0,
-            "pax": 0
-        }
-    },
-    "나고야": {
-        "1h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "2h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "3h": {
-            "flights": 0,
-            "pax": 0
-        }
-    },
-    "니이가타": {
-        "1h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "2h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "3h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 3,
+            "pax": 486
         }
     },
     "나가사키": {
@@ -83,63 +55,21 @@
             "pax": 0
         }
     },
-    "후쿠오카": {
+    "히로시마": {
         "1h": {
             "flights": 0,
             "pax": 0
         },
         "2h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 1,
+            "pax": 162
         },
         "3h": {
             "flights": 0,
             "pax": 0
         }
     },
-    "기타큐슈": {
-        "1h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "2h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "3h": {
-            "flights": 0,
-            "pax": 0
-        }
-    },
-    "구마모토": {
-        "1h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "2h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "3h": {
-            "flights": 0,
-            "pax": 0
-        }
-    },
-    "도쿄": {
-        "1h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "2h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "3h": {
-            "flights": 0,
-            "pax": 0
-        }
-    },
-    "다카마쓰": {
+    "오이타": {
         "1h": {
             "flights": 0,
             "pax": 0
@@ -167,7 +97,7 @@
             "pax": 0
         }
     },
-    "오사카": {
+    "아오모리": {
         "1h": {
             "flights": 0,
             "pax": 0
@@ -177,56 +107,126 @@
             "pax": 0
         },
         "3h": {
-            "flights": 0,
-            "pax": 0
-        }
-    },
-    "삿포로": {
-        "1h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "2h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "3h": {
-            "flights": 0,
-            "pax": 0
-        }
-    },
-    "오이타": {
-        "1h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "2h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "3h": {
-            "flights": 0,
-            "pax": 0
-        }
-    },
-    "오키나와": {
-        "1h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "2h": {
-            "flights": 0,
-            "pax": 0
-        },
-        "3h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 3,
+            "pax": 486
         }
     },
     "오카야마": {
         "1h": {
             "flights": 0,
             "pax": 0
+        },
+        "2h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "3h": {
+            "flights": 0,
+            "pax": 0
+        }
+    },
+    "마쓰야마": {
+        "1h": {
+            "flights": 1,
+            "pax": 162
+        },
+        "2h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "3h": {
+            "flights": 0,
+            "pax": 0
+        }
+    },
+    "센다이": {
+        "1h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "2h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "3h": {
+            "flights": 0,
+            "pax": 0
+        }
+    },
+    "다카마쓰": {
+        "1h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "2h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "3h": {
+            "flights": 1,
+            "pax": 162
+        }
+    },
+    "오사카": {
+        "1h": {
+            "flights": 9,
+            "pax": 1458
+        },
+        "2h": {
+            "flights": 3,
+            "pax": 486
+        },
+        "3h": {
+            "flights": 8,
+            "pax": 1296
+        }
+    },
+    "삿포로": {
+        "1h": {
+            "flights": 1,
+            "pax": 162
+        },
+        "2h": {
+            "flights": 2,
+            "pax": 324
+        },
+        "3h": {
+            "flights": 1,
+            "pax": 162
+        }
+    },
+    "나고야": {
+        "1h": {
+            "flights": 3,
+            "pax": 486
+        },
+        "2h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "3h": {
+            "flights": 4,
+            "pax": 648
+        }
+    },
+    "기타큐슈": {
+        "1h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "2h": {
+            "flights": 0,
+            "pax": 0
+        },
+        "3h": {
+            "flights": 0,
+            "pax": 0
+        }
+    },
+    "시즈오카": {
+        "1h": {
+            "flights": 1,
+            "pax": 162
         },
         "2h": {
             "flights": 0,
@@ -251,21 +251,21 @@
             "pax": 0
         }
     },
-    "마쓰야마": {
+    "구마모토": {
         "1h": {
             "flights": 0,
             "pax": 0
         },
         "2h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 1,
+            "pax": 162
         },
         "3h": {
             "flights": 0,
             "pax": 0
         }
     },
-    "아오모리": {
+    "니이가타": {
         "1h": {
             "flights": 0,
             "pax": 0
@@ -275,8 +275,8 @@
             "pax": 0
         },
         "3h": {
-            "flights": 0,
-            "pax": 0
+            "flights": 3,
+            "pax": 486
         }
     }
 }
