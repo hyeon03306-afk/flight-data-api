@@ -47,7 +47,7 @@ def fetch_and_process_flights():
     # 1. 인천공항
     try:
         icn_request_url = f"{ICN_URL}?serviceKey={API_KEY}&from_time={from_time_str}&to_time={to_time_str}&type=json"
-        icn_response = requests.get(icn_request_url, timeout=10)
+        icn_response = requests.get(icn_request_url, timeout=30)
         icn_data = icn_response.json()
         icn_items = icn_data.get("response", {}).get("body", {}).get("items", [])
         
